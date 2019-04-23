@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Flutter.Server.Infra;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -22,18 +25,33 @@ namespace Flutter_Server
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services
+                .AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddFeatureFolders();
+
+            services.AddMediatR();
+
+            services.AddDbContext<AdminContext>(opts =>
+            {
+                opts.UseSqlServer(Configuration.GetConnectionString("ServerConnection"), opt => opt.EnableRetryOnFailure());
+            });
+
+            services.AddCors(opts =>
+            {
+                opts.AddPolicy("Dev", opt => opt.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials());
+            });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+                app.UseCors("Dev");
             }
             else
             {
@@ -41,7 +59,19 @@ namespace Flutter_Server
             }
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+
+            app.UseMvc(opts =>
+            {
+                opts.MapRoute(
+                    name: "default",
+                    template: "api/{controller}/{action}/{id?}");
+            });
+
+            if (env.IsDevelopment())
+            {
+                app.UseWelcomePage();
+            }
         }
+
     }
 }
