@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FlutterServer.Migrations
 {
-    public partial class Inicial : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,7 +17,7 @@ namespace FlutterServer.Migrations
                     Password = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
-                    Age = table.Column<int>(nullable: false),
+                    Age = table.Column<string>(nullable: true),
                     Gender = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
                     Active = table.Column<bool>(nullable: true),

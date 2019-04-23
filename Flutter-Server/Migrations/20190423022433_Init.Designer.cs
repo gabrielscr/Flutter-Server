@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlutterServer.Migrations
 {
     [DbContext(typeof(AdminContext))]
-    [Migration("20190423012715_Inicial")]
-    partial class Inicial
+    [Migration("20190423022433_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,7 +29,7 @@ namespace FlutterServer.Migrations
 
                     b.Property<bool?>("Active");
 
-                    b.Property<int>("Age");
+                    b.Property<string>("Age");
 
                     b.Property<string>("Email");
 

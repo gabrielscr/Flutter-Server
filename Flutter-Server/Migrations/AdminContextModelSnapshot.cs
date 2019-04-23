@@ -27,7 +27,7 @@ namespace FlutterServer.Migrations
 
                     b.Property<bool?>("Active");
 
-                    b.Property<int>("Age");
+                    b.Property<string>("Age");
 
                     b.Property<string>("Email");
 
