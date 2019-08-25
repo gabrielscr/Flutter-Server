@@ -43,6 +43,14 @@ namespace Flutter_Server
             {
                 opts.AddPolicy("Dev", opt => opt.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials());
             });
+
+            services.AddCors(opts =>
+            {
+                opts.AddPolicy("Production", o =>
+                {
+                    o.WithOrigins("https://gabrielscrocha-001-site1.ftempurl.com").AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials();
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -55,10 +63,15 @@ namespace Flutter_Server
             }
             else
             {
+                app.UseCors("Production");
+                app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            app.UseDefaultFiles();
+
+            app.UseStaticFiles();
 
             app.UseMvc(opts =>
             {
@@ -66,11 +79,6 @@ namespace Flutter_Server
                     name: "default",
                     template: "api/{controller}/{action}/{id?}");
             });
-
-            if (env.IsDevelopment())
-            {
-                app.UseWelcomePage();
-            }
         }
 
     }
